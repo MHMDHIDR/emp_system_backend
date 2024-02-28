@@ -1,0 +1,24 @@
+{
+  "name": "emp_system_backend",
+  "version": "1.0.0",
+  "description": "Employees and Clients Management System",
+  "type": "commonjs",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node index.cjs",
+    "dev": "nodemon index.cjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mysql2": "^3.9.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.1",
+    "nodemon": "^3.0.3"
+  }
+}
