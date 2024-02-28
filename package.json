@@ -2,7 +2,6 @@
   "name": "emp_system_backend",
   "version": "1.0.0",
   "description": "Employees and Clients Management System",
-  "type": "commonjs",
   "main": "index.js",
   "private": true,
   "scripts": {
