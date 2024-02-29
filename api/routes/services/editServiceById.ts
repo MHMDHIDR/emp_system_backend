@@ -50,7 +50,7 @@ export const editServiceById = async (req: any, res: any) => {
     )
 
     // add a new record into receipts table and set service_paid_amount and id ,client_id ,service_id ,employee_id ,created_at
-    if (formData.service_paid_amount) {
+    if (formData.service_payment_status !== 'unpaid') {
       const [receiptsRows]: any = await connectDB.query(
         `INSERT INTO receipts
           (service_id, client_id, employee_id, service_paid_amount, created_at)
@@ -62,12 +62,13 @@ export const editServiceById = async (req: any, res: any) => {
           Number(formData.service_paid_amount)
         ]
       )
+    }
 
-      if (receiptsRows.affectedRows === 1 && servicesRows.affectedRows === 1) {
-        res
-          .status(200)
-          .json({ service_updated: true, message: `تم تحديث بيانات الخدمة بنجاح` })
-      }
+    // return response
+    if (servicesRows.affectedRows === 1) {
+      res
+        .status(200)
+        .json({ service_updated: true, message: `تم تحديث بيانات الخدمة بنجاح` })
     }
   } catch (error: any) {
     console.error('Error updating employee:', error)

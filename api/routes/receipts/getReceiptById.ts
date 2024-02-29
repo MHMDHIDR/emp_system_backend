@@ -48,10 +48,8 @@ export const getReceiptById = async (req: any, res: any) => {
       parseInt(serviceId) || parseInt(customerId) // Use either serviceId or customerId based on the condition
     ])
 
-    console.log('rows -->', rows)
-
     if (rows.length === 0) {
-      res.status(404).json({ error: 'Receipts not found' })
+      res.status(200).json([])
     } else {
       res.status(200).json(rows)
     }
