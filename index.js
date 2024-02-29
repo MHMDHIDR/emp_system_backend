@@ -26,6 +26,9 @@ app.get('/', (_req, res) => {
 })
 
 // Start the server
-app.listen(PORT, () => console.log(`[🛜 == SERVER is running on PORT == ${PORT}]`))
+app.listen(PORT, () => {
+  console.log(`[🛜 == SERVER is running ==]`)
+  console.log(`[🛜 == http://localhost:${PORT}]`)
+})
 
 module.exports = app
