@@ -1,9 +1,4 @@
-node_modules
-backend/.env
-backend/.DS_Store
-backend/routes/.DS_Store
-backend/routes/customers/.DS_Store
-.DS_Store
-backend/package-lock.json
-package-lock.json
 .env
+.DS_Store
+.env.sample
+node_modules
