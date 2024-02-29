@@ -1,15 +1,34 @@
-const express = require('express')
+import 'dotenv/config'
+import express from 'express'
+import cors from 'cors'
+import logger from './middleware/logger'
+import employeesRoutes from './routes/employees'
+import customersRoutes from './routes/customers'
+import servicesRoutes from './routes/services'
+import receiptsRoutes from './routes/receipts'
+import officeDetailsRoutes from './routes/office-details'
+
 const app = express()
+const { PORT } = process.env
 
-app.get('/', (req: any, res: { send: (arg0: string) => any }) =>
-  res.send('Express on Vercel')
-)
+app.use(cors())
+app.use(logger('full') as express.RequestHandler)
+app.use(express.json())
 
-// endpoint to test the server
-app.get('/test', (req: any, res: { send: (arg0: string) => any }) =>
-  res.send('Server is working')
-)
+// All routes for the employee
+app.use('/employees', employeesRoutes)
+app.use('/customers', customersRoutes)
+app.use('/services', servicesRoutes)
+app.use('/receipts', receiptsRoutes)
+app.use('/office-details', officeDetailsRoutes)
+app.get('/', (req: any, res: { send: (arg0: string) => void }) => {
+  res.send('Hello World!')
+})
 
-app.listen(3000, () => console.log('Server ready on port http://localhost:3000'))
+// Start the server
+app.listen(PORT, () => {
+  console.log(`[🛜 == SERVER is running ==]`)
+  console.log(`[🛜 == http://localhost:${PORT}]`)
+})
 
-module.exports = app
+export default app
