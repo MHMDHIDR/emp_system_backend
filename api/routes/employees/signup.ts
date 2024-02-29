@@ -37,7 +37,7 @@ interface EmployeeRequestBody {
   comissionPercentage: number
 }
 
-export const signup = async (req: Request, res: Response) => {
+export const signup = async (req: any, res: any) => {
   const {
     username,
     password,

@@ -17,7 +17,7 @@ interface User {
   full_name: string
 }
 
-export const login = async (req: Request, res: Response): Promise<void> => {
+export const login = async (req: any, res: any): Promise<void> => {
   const { username, password } = req.body
   // make sure the hashed password is the same as the one in the database
   const hashedPassword: string = createHash('sha256')
