@@ -8,7 +8,8 @@ import 'dotenv/config'
  * @param {*} res
  */
 export const editCustomerById = async (req: any, res: any) => {
-  const { name, nationality, phone, email, job, credentials, howKnow } = req.body
+  const { employee_id, name, nationality, phone, email, job, credentials, howKnow } =
+    req.body
   const { id: customerId } = req.params
 
   // first check if the username already exists
@@ -25,7 +26,8 @@ export const editCustomerById = async (req: any, res: any) => {
     // Update employee details in personal_employee_info table
     const [customerRows]: any = await connectDB.query(
       `UPDATE clients
-        SET 
+        SET
+          employee_id = COALESCE(?, employee_id),
           client_name = COALESCE(?, client_name),
           nationality = COALESCE(?, nationality),
           phone_number = COALESCE(?, phone_number),
@@ -35,6 +37,7 @@ export const editCustomerById = async (req: any, res: any) => {
           office_discovery_method = COALESCE(?, office_discovery_method)
         WHERE id = ?`,
       [
+        employee_id,
         name || null,
         nationality || null,
         phone || null,
