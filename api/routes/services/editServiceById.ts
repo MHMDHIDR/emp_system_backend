@@ -7,7 +7,7 @@ import { connectDB } from '../../utils/db'
  * @param {*} res
  */
 export const editServiceById = async (req: any, res: any) => {
-  const { formData } = req.body
+  const formData = req.body
   const { id: serviceId } = req.params
 
   // first check if the username already exists
@@ -33,18 +33,20 @@ export const editServiceById = async (req: any, res: any) => {
           service_payment_status = COALESCE(?, service_payment_status),
           created_at = COALESCE(?, created_at),
           ends_at = COALESCE(?, ends_at),
-          service_details = COALESCE(?, service_details)
+          service_details = COALESCE(?, service_details),
+          sub_services = COALESCE(?, sub_services)
         WHERE id = ?`,
       [
-        Number(formData.employee_id) ? Number(formData.employee_id) : null,
-        Number(formData.client_id) ? Number(formData.client_id) : null,
-        Number(formData.representative_id) ? Number(formData.representative_id) : null,
+        formData.employee_id ? Number(formData.employee_id) : null,
+        formData.client_id ? Number(formData.client_id) : null,
+        formData.representative_id ? Number(formData.representative_id) : null,
         formData.service_name ? formData.service_name : null,
         formData.service_total_price ? formData.service_total_price : null,
         formData.service_payment_status ? formData.service_payment_status : null,
         formData.created_at ? formData.created_at : null,
         formData.ends_at ? formData.ends_at : null,
         formData.service_details ? formData.service_details : null,
+        formData.sub_services ? formData.sub_services : null,
         Number(serviceId)
       ]
     )
