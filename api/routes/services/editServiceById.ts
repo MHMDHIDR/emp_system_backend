@@ -20,6 +20,14 @@ export const editServiceById = async (req: any, res: any) => {
     return res.status(400).json({ error: `عفواً لم يتم العثور على الخدمة` })
   }
 
+  console.log('formData -->', formData)
+  console.log('formData.service_details -->', formData.service_details)
+
+  const endsAtDate = new Date(formData.ends_at)
+    .toISOString()
+    .slice(0, 19)
+    .replace('T', ' ')
+
   try {
     // Update employee details in personal_employee_info table
     const [servicesRows]: any = await connectDB.query(
@@ -44,9 +52,9 @@ export const editServiceById = async (req: any, res: any) => {
         formData.service_total_price ? formData.service_total_price : null,
         formData.service_payment_status ? formData.service_payment_status : null,
         formData.created_at ? formData.created_at : null,
-        formData.ends_at ? formData.ends_at : null,
-        formData.service_details ? formData.service_details : null,
-        formData.sub_services ? formData.sub_services : null,
+        endsAtDate ?? null,
+        formData.service_details.length > 1 ? formData.service_details : null,
+        formData.sub_services ? JSON.stringify(formData.sub_services) : null,
         Number(serviceId)
       ]
     )
