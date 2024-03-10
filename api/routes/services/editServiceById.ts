@@ -53,8 +53,9 @@ export const editServiceById = async (req: any, res: any) => {
         formData.service_payment_status ? formData.service_payment_status : null,
         formData.created_at ? formData.created_at : null,
         endsAtDate ?? null,
-        formData.service_details.length > 1 ? formData.service_details : null,
-        formData.sub_services ? JSON.stringify(formData.sub_services) : null,
+        formData.service_details ? formData.service_details : null,
+        // formData.subServices.length > 1 ? formData.subServices : null,
+        formData.subServices ? JSON.stringify(formData.subServices) : null,
         Number(serviceId)
       ]
     )
@@ -75,11 +76,11 @@ export const editServiceById = async (req: any, res: any) => {
     }
 
     // return response
-    if (servicesRows.affectedRows === 1) {
-      res
-        .status(200)
-        .json({ service_updated: true, message: `تم تحديث بيانات الخدمة بنجاح` })
-    }
+    // if (servicesRows.affectedRows === 1) {
+    res
+      .status(200)
+      .json({ service_updated: true, message: `تم تحديث بيانات الخدمة بنجاح` })
+    // }
   } catch (error: any) {
     console.error('Error updating employee:', error)
     res
