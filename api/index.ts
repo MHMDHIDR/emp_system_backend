@@ -31,8 +31,10 @@ app.get('/', (req: any, res: { send: (arg0: string) => void }) => {
 
 // Start the server
 app.listen(PORT, () => {
-  console.log(`[🛜 == SERVER is running ==]`)
-  console.log(`[🛜 == http://localhost:${PORT}]`)
+  console.log(
+    '\x1b[34m',
+    `[     SERVER is running    ]\n[✅ http://localhost:${PORT}  ✅]`
+  )
 })
 
 export default app

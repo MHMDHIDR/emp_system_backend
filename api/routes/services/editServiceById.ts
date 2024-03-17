@@ -7,7 +7,7 @@ import { connectDB } from '../../utils/db'
  * @param {*} res
  */
 export const editServiceById = async (req: any, res: any) => {
-  const formData = req.body
+  const { formData, paidAmount, subServices } = req.body
   const { id: serviceId } = req.params
 
   // first check if the username already exists
@@ -20,14 +20,6 @@ export const editServiceById = async (req: any, res: any) => {
     return res.status(400).json({ error: `عفواً لم يتم العثور على الخدمة` })
   }
 
-  console.log('formData -->', formData)
-  console.log('formData.service_details -->', formData.service_details)
-
-  const endsAtDate = new Date(formData.ends_at)
-    .toISOString()
-    .slice(0, 19)
-    .replace('T', ' ')
-
   try {
     // Update employee details in personal_employee_info table
     const [servicesRows]: any = await connectDB.query(
@@ -39,6 +31,7 @@ export const editServiceById = async (req: any, res: any) => {
           service_name = COALESCE(?, service_name),
           service_total_price = COALESCE(?, service_total_price),
           service_payment_status = COALESCE(?, service_payment_status),
+          service_status = COALESCE(?, service_status),
           created_at = COALESCE(?, created_at),
           ends_at = COALESCE(?, ends_at),
           service_details = COALESCE(?, service_details),
@@ -51,17 +44,17 @@ export const editServiceById = async (req: any, res: any) => {
         formData.service_name ? formData.service_name : null,
         formData.service_total_price ? formData.service_total_price : null,
         formData.service_payment_status ? formData.service_payment_status : null,
+        formData.service_status ? formData.service_status : null,
         formData.created_at ? formData.created_at : null,
-        endsAtDate ?? null,
+        formData.ends_at ? formData.ends_at : null,
         formData.service_details ? formData.service_details : null,
-        // formData.subServices.length > 1 ? formData.subServices : null,
-        formData.subServices ? JSON.stringify(formData.subServices) : null,
+        subServices ? JSON.stringify(subServices) : null,
         Number(serviceId)
       ]
     )
 
     // add a new record into receipts table and set service_paid_amount and id ,client_id ,service_id ,employee_id ,created_at
-    if (formData.service_payment_status !== 'unpaid') {
+    if (formData.service_payment_status !== 'unpaid' && paidAmount !== '') {
       const [receiptsRows]: any = await connectDB.query(
         `INSERT INTO receipts
           (service_id, client_id, employee_id, service_paid_amount, created_at)
@@ -70,7 +63,7 @@ export const editServiceById = async (req: any, res: any) => {
           Number(serviceId),
           Number(existingUserRows[0].client_id),
           Number(existingUserRows[0].employee_id),
-          Number(formData.service_paid_amount)
+          Number(paidAmount)
         ]
       )
     }
