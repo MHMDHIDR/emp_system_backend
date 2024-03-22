@@ -21,7 +21,7 @@ export const getReceipts = async (req: any, res: any) => {
 
     // Query to retrieve necessary data from the receipts table
     const query = `
-      SELECT r.*, r.id AS receipt_id, c.id AS client_id, c.client_name, pei.id AS employee_id, pei.full_name, s.service_name
+      SELECT r.*, r.id AS receipt_id, c.id AS client_id, c.client_name, pei.id AS employee_id, pei.full_name, s.service_name, s.service_total_price
       FROM receipts r
       LEFT JOIN services s ON r.service_id = s.id
       LEFT JOIN clients c ON r.client_id = c.id

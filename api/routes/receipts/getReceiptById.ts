@@ -24,20 +24,20 @@ export const getReceiptById = async (req: any, res: any) => {
 
     // JOIN receipts with services, clients, and personal_employee_info to get service, client, and employee details
     const query = parseInt(serviceId)
-      ? `SELECT r.*, r.id AS receipt_id, c.id, c.client_name, pei.id, pei.full_name, s.service_name
+      ? `SELECT r.*, r.id AS receipt_id, c.id, c.client_name, pei.id, pei.full_name, s.service_name, s.service_total_price
         FROM receipts r
         LEFT JOIN services s ON r.service_id = s.id
         LEFT JOIN clients c ON r.client_id = c.id
         LEFT JOIN personal_employee_info pei ON r.employee_id = pei.id
         WHERE r.service_id = ?`
       : parseInt(customerId)
-      ? `SELECT r.*, r.id AS receipt_id, c.id, c.client_name, pei.id, pei.full_name, s.service_name
+      ? `SELECT r.*, r.id AS receipt_id, c.id, c.client_name, pei.id, pei.full_name, s.service_name, s.service_total_price
         FROM receipts r
         LEFT JOIN services s ON r.service_id = s.id
         LEFT JOIN clients c ON r.client_id = c.id
         LEFT JOIN personal_employee_info pei ON r.employee_id = pei.id
         WHERE r.client_id = ?`
-      : `SELECT r.*, r.id AS receipt_id, c.id, c.client_name, pei.id, pei.full_name, s.service_name
+      : `SELECT r.*, r.id AS receipt_id, c.id, c.client_name, pei.id, pei.full_name, s.service_name, s.service_total_price
         FROM receipts r
         LEFT JOIN services s ON r.service_id = s.id
         LEFT JOIN clients c ON r.client_id = c.id
