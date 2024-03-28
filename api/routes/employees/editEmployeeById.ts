@@ -95,9 +95,10 @@ export const editEmployeeById = async (req: any, res: any) => {
       [username || null, hashedPassword || null, role || null, employeeId]
     )
 
-    if (userRows.affectedRows === 1 && employeeRows.affectedRows === 1) {
-      res.status(200).json({ emp_updated: true, message: `تم تحديث بيانات الموظف بنجاح` })
-    }
+    // if (userRows.affectedRows === 1 && employeeRows.affectedRows === 1) {
+    //   res.status(200).json({ emp_updated: true, message: `تم تحديث بيانات الموظف بنجاح` })
+    // }
+    res.status(200).json({ emp_updated: true, message: `تم تحديث بيانات الموظف بنجاح` })
   } catch (error: any) {
     console.error('Error updating employee:', error.message)
     res
