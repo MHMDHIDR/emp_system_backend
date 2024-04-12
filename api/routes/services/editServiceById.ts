@@ -10,7 +10,7 @@ export const editServiceById = async (req: any, res: any) => {
   const { formData, paidAmount, subServices } = req.body
   const { id: serviceId } = req.params
 
-  // first check if the username already exists
+  // Check if the service exists
   const [existingUserRows]: any = await connectDB.query(
     'SELECT * FROM services WHERE id = ?',
     [serviceId]
@@ -21,7 +21,13 @@ export const editServiceById = async (req: any, res: any) => {
   }
 
   try {
-    // Update employee details in personal_employee_info table
+    // Get service details
+    const [serviceDetails]: any = await connectDB.query(
+      'SELECT * FROM services WHERE id = ?',
+      [serviceId]
+    )
+
+    // Update service details
     const [servicesRows]: any = await connectDB.query(
       `UPDATE services
         SET
@@ -53,27 +59,50 @@ export const editServiceById = async (req: any, res: any) => {
       ]
     )
 
-    // add a new record into receipts table and set service_paid_amount and id ,client_id ,service_id ,employee_id ,created_at
+    // Get the last paid amount from the previous receipt
+    const [lastReceiptRow]: any = await connectDB.query(
+      `SELECT service_remaining_amount
+      FROM receipts
+      WHERE service_id = ?
+      ORDER BY created_at DESC
+      LIMIT 1`,
+      [Number(serviceId)]
+    )
+
+    let remainingAmount = 0
+
+    if (lastReceiptRow && lastReceiptRow.length > 0) {
+      // If there are previous records
+      const lastReceipt = lastReceiptRow[0]
+      remainingAmount = lastReceipt.service_remaining_amount - Number(paidAmount)
+    } else {
+      // If there are no previous records
+      remainingAmount = Number(serviceDetails[0].service_total_price) - Number(paidAmount)
+    }
+
+    // Ensure remaining amount is not negative
+    remainingAmount = Math.max(remainingAmount, 0)
+
+    // Add a new record into receipts table
     if (formData.service_payment_status !== 'unpaid' && paidAmount !== '') {
       const [receiptsRows]: any = await connectDB.query(
         `INSERT INTO receipts
-          (service_id, client_id, employee_id, service_paid_amount, created_at)
-          VALUES (?, ?, ?, ?, NOW())`,
+          (service_id, client_id, employee_id, service_paid_amount, service_remaining_amount, created_at)
+          VALUES (?, ?, ?, ?, ?, NOW())`,
         [
           Number(serviceId),
           Number(existingUserRows[0].client_id),
           Number(existingUserRows[0].employee_id),
-          Number(paidAmount)
+          Number(paidAmount),
+          remainingAmount
         ]
       )
     }
 
-    // return response
-    // if (servicesRows.affectedRows === 1) {
+    // Respond with success message
     res
       .status(200)
       .json({ service_updated: true, message: `تم تحديث بيانات الخدمة بنجاح` })
-    // }
   } catch (error: any) {
     console.error('Error updating employee:', error)
     res
