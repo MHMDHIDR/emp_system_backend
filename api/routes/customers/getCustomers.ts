@@ -37,7 +37,7 @@ export const getCustomers = async (req: any, res: any) => {
     const nextPage = totalCustomers > page * ITEMS_PER_PAGE ? page + 1 : null
 
     // Send the fetched data as a response along with total count
-    res.status(200).json({ rows, totalCountRows, nextPage })
+    res.status(200).json({ rows, totalCountRows: totalCountRows[0].total, nextPage })
   } catch (error: any) {
     // If an error occurs, send the error message as a response
     res.status(500).json({ error: error.message })
