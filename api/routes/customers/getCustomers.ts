@@ -12,7 +12,7 @@ import { ITEMS_PER_PAGE } from '../../utils/const'
  * @return  {Object} { error }
  */
 export const getCustomers = async (req: any, res: any) => {
-  const page = req.params.page || 1
+  const page = Number(req.params.page) || 1
   const offset = (page - 1) * ITEMS_PER_PAGE
 
   try {
@@ -33,8 +33,11 @@ export const getCustomers = async (req: any, res: any) => {
     // Get customers' information from the database
     const [rows]: any = await connectDB.query(query, [ITEMS_PER_PAGE, offset])
 
+    // get next page number
+    const nextPage = totalCustomers > page * ITEMS_PER_PAGE ? page + 1 : null
+
     // Send the fetched data as a response along with total count
-    res.status(200).json({ rows, totalCustomers })
+    res.status(200).json({ rows, totalCountRows, nextPage })
   } catch (error: any) {
     // If an error occurs, send the error message as a response
     res.status(500).json({ error: error.message })
