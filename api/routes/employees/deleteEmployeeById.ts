@@ -36,9 +36,20 @@ export const deleteEmployeeById = async (req: any, res: any) => {
       res.status(200).json({ emp_deleted: true, message: `تم حذف بيانات الموظف بنجاح` })
     }
   } catch (error: any) {
-    console.error('Error updating employee:', error.message)
-    res
-      .status(500)
-      .json({ emp_deleted: false, message: `حدث خطأ أثناء حذف بيانات الموظف` })
+    console.error('Error deleting employee:', error.message)
+
+    if (error.sqlMessage && error.sqlMessage.includes('foreign key constraint')) {
+      // If the error is due to a foreign key constraint violation
+      res.status(400).json({
+        emp_deleted: false,
+        message:
+          'لا يمكن حذف الموظف لأنه مرتبط ببيانات عملاء وخدمات، يرجى حذف العملاء والخدمات المرتبطة به أولاً'
+      })
+    } else {
+      // If it's a general error
+      res
+        .status(500)
+        .json({ emp_deleted: false, message: `حدث خطأ أثناء حذف بيانات الموظف` })
+    }
   }
 }
