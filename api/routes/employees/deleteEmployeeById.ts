@@ -36,8 +36,11 @@ export const deleteEmployeeById = async (req: any, res: any) => {
   } catch (error: any) {
     console.error('Error deleting employee:', error.message)
 
-    if (error.sqlMessage && error.sqlMessage.includes('foreign key constraint')) {
-      // If the error is due to a foreign key constraint violation
+    if (
+      error.sqlMessage &&
+      error.sqlMessage.includes('Cannot delete employee with associated records')
+    ) {
+      // If the error is due to a Cannot delete employee with associated records violation
       res.status(400).json({
         emp_deleted: false,
         message:
