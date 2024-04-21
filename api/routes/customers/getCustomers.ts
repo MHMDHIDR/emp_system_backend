@@ -25,7 +25,7 @@ export const getCustomers = async (req: any, res: any) => {
 
     let query
     let queryParams
-    // If the employee has the role 'admin', retrieve all clients
+    // If the employee has the role 'admin', retrieve all clients and count all clients
     if (adminCheck && adminCheck.length > 0) {
       query = `
         SELECT id, employee_id, client_name, created_at, nationality,
@@ -46,10 +46,18 @@ export const getCustomers = async (req: any, res: any) => {
       queryParams = [currentEmpId, ITEMS_PER_PAGE, offset]
     }
 
-    // Get total count of customers
-    const [totalCountRows]: any = await connectDB.query(
-      'SELECT COUNT(*) as total FROM clients'
-    )
+    // Get total count of customers based on the employee's role
+    let totalCountQuery: string
+    let totalCountParams: any[]
+
+    if (adminCheck && adminCheck.length > 0) {
+      totalCountQuery = 'SELECT COUNT(*) as total FROM clients'
+      totalCountParams = []
+    } else {
+      totalCountQuery = 'SELECT COUNT(*) as total FROM clients WHERE employee_id = ?'
+      totalCountParams = [currentEmpId]
+    }
+    const [totalCountRows]: any = await connectDB.query(totalCountQuery, totalCountParams)
     const totalCustomers = totalCountRows[0].total
 
     // Get customers' information from the database based on the determined query
@@ -59,7 +67,7 @@ export const getCustomers = async (req: any, res: any) => {
     const nextPage = totalCustomers > page * ITEMS_PER_PAGE ? page + 1 : null
 
     // Send the fetched data as a response along with total count
-    res.status(200).json({ rows, totalCountRows: totalCountRows[0].total, nextPage })
+    res.status(200).json({ rows, totalCountRows: totalCustomers, nextPage })
   } catch (error: any) {
     // If an error occurs, send the error message as a response
     res.status(500).json({ error: error.message })
