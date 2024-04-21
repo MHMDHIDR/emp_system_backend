@@ -1,6 +1,4 @@
 import { connectDB } from '../../utils/db'
-const { createHash } = require('crypto')
-import 'dotenv/config'
 
 /**
  * @desc Delete endpoint for employees
