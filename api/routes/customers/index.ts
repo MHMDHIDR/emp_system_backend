@@ -3,6 +3,7 @@ import { Router } from 'express'
 import { addCustomer } from './addCustomer'
 import { getCustomers } from './getCustomers'
 import { getCustomerById } from './getCustomerById'
+import { searchCustomer } from './searchCustomer'
 import { editCustomerById } from './editCustomerById'
 import { deleteCustomerById } from './deleteCustomerById'
 
@@ -12,6 +13,7 @@ const customers = Router()
 customers.post('/addCustomer', addCustomer)
 customers.get('/:page(\\d+)?', getCustomers)
 customers.get('/byId/:id', getCustomerById)
+customers.get('/searchCustomer/:query', searchCustomer)
 customers.delete('/delete_customer/:id', deleteCustomerById)
 customers.patch('/editById/:id', editCustomerById)
 
