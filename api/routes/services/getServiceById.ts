@@ -12,42 +12,37 @@ import { connectDB } from '../../utils/db'
  */
 export const getServiceById = async (req: any, res: any) => {
   const { id: customerId } = req.params
-  const customerClientId = req.query.customerId
 
   try {
     // Validate customerId is a positive integer
-    if (!customerClientId && (!/^\d+$/.test(customerId) || parseInt(customerId) < 1)) {
+    if (!customerId && (!/^\d+$/.test(customerId) || parseInt(customerId) < 1)) {
       return res.status(400).json({ error: 'Invalid Service ID' })
-    } else if (
-      customerClientId &&
-      (!/^\d+$/.test(customerClientId) || parseInt(customerClientId) < 1)
-    ) {
+    } else if (customerId && (!/^\d+$/.test(customerId) || parseInt(customerId) < 1)) {
       return res.status(400).json({ error: 'Invalid Customer ID' })
     }
 
     // Get total count of customers
     const countQuery = parseInt(customerId)
       ? `SELECT COUNT(*) as total FROM services WHERE id = ?`
-      : parseInt(customerClientId)
+      : parseInt(customerId)
       ? `SELECT COUNT(*) as total FROM services WHERE client_id = ?`
       : `SELECT COUNT(*) as total FROM services`
     const query = parseInt(customerId)
-      ? `SELECT * from services WHERE id = ?`
-      : parseInt(customerClientId)
       ? `SELECT * from services WHERE client_id = ?`
       : `SELECT * from services`
+
     const [rows]: any = await connectDB.query(query, [
-      parseInt(customerId) ? parseInt(customerId) : parseInt(customerClientId)
+      parseInt(customerId) ? parseInt(customerId) : parseInt(customerId)
     ])
     const [totalCountRows]: any = await connectDB.query(countQuery, [
-      parseInt(customerId) ? parseInt(customerId) : parseInt(customerClientId)
+      parseInt(customerId) ? parseInt(customerId) : parseInt(customerId)
     ])
     const totalServices = totalCountRows[0].total
 
     if (rows.length === 0) {
       res.status(404).json({ error: 'Service not found' })
     } else {
-      res.status(200).json({ rows: customerClientId ? rows : rows[0], totalServices })
+      res.status(200).json({ rows: customerId ? rows : rows[0], totalServices })
     }
   } catch (error: any) {
     console.error('Error fetching Service details:', error.message)
