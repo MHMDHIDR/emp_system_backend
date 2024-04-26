@@ -37,8 +37,6 @@ export const getServiceById = async (req: any, res: any) => {
       ? `SELECT * from services WHERE id = ?`
       : `SELECT * from services`
 
-    console.log('query ->', query)
-
     const [rows]: any = await connectDB.query(query, [
       parseInt(customerId)
         ? parseInt(customerId)
