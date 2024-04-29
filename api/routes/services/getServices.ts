@@ -13,14 +13,21 @@ export const getServices = async (req: any, res: any) => {
   const employeeId = req.query.employeeId
   const offset = (page - 1) * ITEMS_PER_PAGE
 
-  // construct the query to get the services and the total count of services
-  const query = employeeId
-    ? `SELECT * FROM services WHERE employee_id = ? LIMIT ? OFFSET ?`
-    : `SELECT * FROM services LIMIT ? OFFSET ?`
+  // query employeeId to check the role
+  const queryEmployee = `SELECT role FROM system_employee_info WHERE employee_id = ?`
 
-  const getTotalQuery = employeeId
-    ? `SELECT COUNT(*) as total FROM services WHERE employee_id = ?`
-    : `SELECT COUNT(*) as total FROM services`
+  const [rows]: any = await connectDB.query(queryEmployee, [employeeId])
+
+  // construct the query to get the services and the total count of services
+  const query =
+    employeeId && rows[0].role !== 'admin'
+      ? `SELECT * FROM services WHERE employee_id = ? LIMIT ? OFFSET ?`
+      : `SELECT * FROM services LIMIT ? OFFSET ?`
+
+  const getTotalQuery =
+    employeeId && rows[0].role !== 'admin'
+      ? `SELECT COUNT(*) as total FROM services WHERE employee_id = ?`
+      : `SELECT COUNT(*) as total FROM services`
 
   try {
     // Get total count of services
@@ -32,8 +39,6 @@ export const getServices = async (req: any, res: any) => {
       query,
       employeeId ? [employeeId, ITEMS_PER_PAGE, offset] : [ITEMS_PER_PAGE, offset]
     )
-
-    console.log('rows=>', rows)
 
     // Send the fetched data as a response along with total count
     res.status(200).json({ rows, totalServices })
