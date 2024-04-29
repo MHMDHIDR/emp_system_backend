@@ -9,14 +9,9 @@ import { ITEMS_PER_PAGE } from '../../utils/const'
  * @param   {object} req - Request object
  */
 export const getServices = async (req: any, res: any) => {
-  const page = req.params.page || 1
+  const page = Number(req.params.page) || 1
   const employeeId = req.query.employeeId
   const offset = (page - 1) * ITEMS_PER_PAGE
-
-  // const [employeeRole] = await connectDB.query(
-  //   `SELECT * FROM system_employee_info WHERE employee_id = ?`,
-  //   [employeeId]
-  // )
 
   // construct the query to get the services and the total count of services
   const query = employeeId
