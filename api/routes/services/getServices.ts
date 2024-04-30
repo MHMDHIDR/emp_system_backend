@@ -15,7 +15,6 @@ export const getServices = async (req: any, res: any) => {
 
   // query employeeId to check the role
   const queryEmployee = `SELECT role FROM system_employee_info WHERE employee_id = ?`
-
   const [rows]: any = await connectDB.query(queryEmployee, [employeeId])
 
   // construct the query to get the services and the total count of services

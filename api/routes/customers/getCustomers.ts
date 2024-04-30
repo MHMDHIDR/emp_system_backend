@@ -14,7 +14,8 @@ import { ITEMS_PER_PAGE } from '../../utils/const'
 export const getCustomers = async (req: any, res: any) => {
   const page = Number(req.params.page) || 1
   const offset = (page - 1) * ITEMS_PER_PAGE
-  const currentEmpId = req.query.currentEmpId
+  const currentEmpId = req.query.employeeId
+  const getAll = req.query.getAll
 
   try {
     // Check if the employee with currentEmpId has the role 'admin'
@@ -31,9 +32,9 @@ export const getCustomers = async (req: any, res: any) => {
         SELECT id, employee_id, client_name, created_at, nationality,
                phone_number, email, job_title, office_discovery_method, customer_credentials
         FROM clients
-        LIMIT ? OFFSET ?
+        ${!getAll ? 'LIMIT ? OFFSET ?' : ''}
       `
-      queryParams = [ITEMS_PER_PAGE, offset]
+      queryParams = [!getAll ? ITEMS_PER_PAGE : '', !getAll ? offset : '']
     } else {
       // If not 'admin', retrieve clients where client.employee_id === currentEmpId
       query = `
@@ -41,9 +42,9 @@ export const getCustomers = async (req: any, res: any) => {
                phone_number, email, job_title, office_discovery_method, customer_credentials
         FROM clients
         WHERE employee_id = ?
-        LIMIT ? OFFSET ?
+        ${!getAll ? 'LIMIT ? OFFSET ?' : ''}
       `
-      queryParams = [currentEmpId, ITEMS_PER_PAGE, offset]
+      queryParams = [currentEmpId, !getAll ? ITEMS_PER_PAGE : '', !getAll ? offset : '']
     }
 
     // Get total count of customers based on the employee's role
